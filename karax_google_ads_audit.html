@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karax.ai — Google Ads Performance Audit | Feb 15 – Mar 16, 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #7c5cfc;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffa726;
+    --accent5: #42a5f5;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #6060a0;
+    --green: #00d4aa;
+    --red: #ff6b6b;
+    --yellow: #ffa726;
+    --blue: #42a5f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a30 0%, #12121a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+  .header-left p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    background: rgba(124,92,252,0.15); color: var(--accent); border: 1px solid rgba(124,92,252,0.3);
+  }
+  .main { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
+
+  /* ALERT BANNER */
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(255,107,107,0.12), rgba(255,167,38,0.08));
+    border: 1px solid rgba(255,107,107,0.35);
+    border-radius: 12px; padding: 18px 24px; margin-bottom: 32px;
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .alert-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .alert-banner strong { color: var(--red); display: block; font-size: 15px; margin-bottom: 4px; }
+  .alert-banner p { color: var(--text2); font-size: 13px; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+  .kpi-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; position: relative; overflow: hidden;
+  }
+  .kpi-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kpi-card.spend::before { background: linear-gradient(90deg, #7c5cfc, #a78bfa); }
+  .kpi-card.conv::before { background: linear-gradient(90deg, #00d4aa, #34d399); }
+  .kpi-card.cpa::before { background: linear-gradient(90deg, #42a5f5, #67e8f9); }
+  .kpi-card.waste::before { background: linear-gradient(90deg, #ff6b6b, #fca5a5); }
+  .kpi-card.chrome::before { background: linear-gradient(90deg, #ffa726, #fde68a); }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 10px; }
+  .kpi-value { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+  .kpi-sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .kpi-trend { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; margin-top: 8px; padding: 2px 8px; border-radius: 20px; }
+  .kpi-trend.bad { background: rgba(255,107,107,0.15); color: var(--red); }
+  .kpi-trend.good { background: rgba(0,212,170,0.15); color: var(--green); }
+  .kpi-trend.warn { background: rgba(255,167,38,0.15); color: var(--yellow); }
+
+  /* SECTION */
+  .section-title {
+    font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .tag {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600;
+    background: rgba(124,92,252,0.15); color: var(--accent);
+  }
+  .section { margin-bottom: 40px; }
+
+  /* CHART GRID */
+  .chart-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+  .chart-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+  }
+  .chart-card h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+  .chart-wrap { position: relative; }
+
+  /* TABLES */
+  .table-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin-bottom: 24px;
+  }
+  .table-header { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+  .table-header h3 { font-size: 14px; font-weight: 600; color: var(--text); }
+  .table-header p { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 12px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); background: var(--surface2); text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 14px 16px; border-bottom: 1px solid rgba(42,42,61,0.5); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(124,92,252,0.04); }
+
+  .verdict {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  }
+  .verdict.scale { background: rgba(0,212,170,0.15); color: var(--green); }
+  .verdict.pause { background: rgba(255,107,107,0.15); color: var(--red); }
+  .verdict.warn { background: rgba(255,167,38,0.15); color: var(--yellow); }
+  .verdict.dead { background: rgba(96,96,160,0.15); color: var(--text3); }
+  .verdict.new { background: rgba(66,165,245,0.15); color: var(--blue); }
+
+  /* WASTE ROWS */
+  .waste-row td:first-child { border-left: 3px solid var(--red); }
+  .caution-row td:first-child { border-left: 3px solid var(--yellow); }
+  .good-row td:first-child { border-left: 3px solid var(--green); }
+
+  /* RECS */
+  .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .rec-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+  }
+  .rec-card .rec-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; margin-bottom: 12px;
+  }
+  .rec-card.critical .rec-num { background: rgba(255,107,107,0.2); color: var(--red); }
+  .rec-card.scale .rec-num { background: rgba(0,212,170,0.2); color: var(--green); }
+  .rec-card.optimize .rec-num { background: rgba(66,165,245,0.2); color: var(--blue); }
+  .rec-card h4 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .rec-card p { font-size: 12px; color: var(--text2); line-height: 1.7; }
+  .rec-impact { font-size: 11px; font-weight: 700; margin-top: 10px; }
+  .rec-card.critical .rec-impact { color: var(--red); }
+  .rec-card.scale .rec-impact { color: var(--green); }
+  .rec-card.optimize .rec-impact { color: var(--blue); }
+
+  /* NEGATIVE KW */
+  .neg-kw-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 20px 24px; }
+  .neg-kw {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    border: 1px solid; display: flex; align-items: center; gap: 5px;
+  }
+  .neg-kw.competitor { background: rgba(255,107,107,0.1); color: #ff9999; border-color: rgba(255,107,107,0.3); }
+  .neg-kw.irrelevant { background: rgba(255,167,38,0.1); color: #ffcc80; border-color: rgba(255,167,38,0.3); }
+  .neg-kw.generic { background: rgba(96,96,160,0.1); color: #a0a0c8; border-color: rgba(96,96,160,0.3); }
+
+  /* HEATMAP */
+  .heatmap-grid { display: grid; grid-template-columns: auto repeat(7, 1fr); gap: 4px; padding: 20px 24px; }
+  .heatmap-label { color: var(--text3); font-size: 11px; display: flex; align-items: center; padding-right: 8px; }
+  .heatmap-cell {
+    height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; cursor: default;
+  }
+  .heatmap-header { color: var(--text3); font-size: 11px; font-weight: 600; text-align: center; padding-bottom: 4px; }
+
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(124,92,252,0.08), rgba(0,212,170,0.04));
+    border: 1px solid rgba(124,92,252,0.25);
+    border-radius: 12px; padding: 24px; margin-bottom: 24px;
+  }
+  .highlight-box h3 { color: var(--accent); font-size: 15px; margin-bottom: 12px; }
+  .highlight-box p { color: var(--text2); font-size: 13px; line-height: 1.8; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .exec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
+  .exec-card {
+    border-radius: 12px; padding: 20px; border: 1px solid;
+  }
+  .exec-card.problem { background: rgba(255,107,107,0.05); border-color: rgba(255,107,107,0.2); }
+  .exec-card.opportunity { background: rgba(0,212,170,0.05); border-color: rgba(0,212,170,0.2); }
+  .exec-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .exec-card.problem h4 { color: var(--red); }
+  .exec-card.opportunity h4 { color: var(--green); }
+  .exec-card ul { list-style: none; }
+  .exec-card ul li { font-size: 13px; color: var(--text2); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; gap: 8px; }
+  .exec-card ul li:last-child { border-bottom: none; }
+  .exec-card ul li::before { content: '→'; color: var(--text3); flex-shrink: 0; }
+
+  footer { text-align: center; padding: 32px; color: var(--text3); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>🚀 Karax.ai — Google Ads Performance Audit</h1>
+    <p>30-Day Analysis: Feb 15 – Mar 16, 2026 · Senior PPC Strategist Report · 3 Active Campaigns</p>
+  </div>
+  <span class="badge">⚠️ Critical Issues Found</span>
+</div>
+
+<div class="main">
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner">
+    <div class="alert-icon">🔥</div>
+    <div>
+      <strong>Critical Finding: ₹6,000+ in Identifiable Wasted Spend This Period</strong>
+      <p>Every search term in the Overview report shows 0 conversions, yet ₹25,627 was spent. Your Chrome Extension campaign burns ₹308 per conversion — 6.6× your best campaign's CPA. Competitor brand searches (Notion AI, Tome AI, Blackbox AI, Gamma, Otter) are draining budget with zero returns. Broad Match on all keywords is the root cause. Immediate action required.</p>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card spend">
+      <div class="kpi-label">Total 30-Day Spend</div>
+      <div class="kpi-value">₹25,628</div>
+      <div class="kpi-sub">Across 3 active campaigns</div>
+      <div class="kpi-trend warn">↑ +₹8,306 (new campaign)</div>
+    </div>
+    <div class="kpi-card conv">
+      <div class="kpi-label">Total Conversions</div>
+      <div class="kpi-value">597</div>
+      <div class="kpi-sub">Free trial signups (estimated)</div>
+      <div class="kpi-trend good">✓ 597 tracked events</div>
+    </div>
+    <div class="kpi-card cpa">
+      <div class="kpi-label">Blended CPA</div>
+      <div class="kpi-value">₹42.94</div>
+      <div class="kpi-sub">Avg. across all campaigns</div>
+      <div class="kpi-trend good">Best: ₹30.77 (Campaign 01)</div>
+    </div>
+    <div class="kpi-card waste">
+      <div class="kpi-label">Chrome Ext. CPA</div>
+      <div class="kpi-value">₹308</div>
+      <div class="kpi-sub">8 conversions / ₹2,464 spent</div>
+      <div class="kpi-trend bad">▲ 6.6× above average!</div>
+    </div>
+    <div class="kpi-card chrome">
+      <div class="kpi-label">Competitor Waste</div>
+      <div class="kpi-value">₹760+</div>
+      <div class="kpi-sub">0 conversions on rival brand terms</div>
+      <div class="kpi-trend bad">▲ Immediate negative KWs needed</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <h3>📊 Campaign Spend vs. Conversions</h3>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="campaignChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>📱 Device Performance: CPA Comparison</h3>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="deviceChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="chart-grid-2">
+    <div class="chart-card" style="grid-column: span 2">
+      <h3>📈 Daily Spend & Conversions Trend (Feb 15 – Mar 16, 2026)</h3>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid-3">
+    <div class="chart-card">
+      <h3>👤 Age Demographics (Impressions)</h3>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="ageChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>⏰ Hourly Impression Distribution</h3>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="hourChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>📅 Day of Week Impressions</h3>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="dayChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: CAMPAIGN AUDIT TABLE -->
+  <div class="section">
+    <div class="section-title">Step 2 — Campaign Performance Audit <span class="tag">30 Days</span></div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Campaign-Level Summary: Feb 15 – Mar 16, 2026</h3>
+        <p>Source: Google Ads Campaign Overview export · Conversions = tracked goal events</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>Spend</th>
+            <th>Conversions</th>
+            <th>CPA</th>
+            <th>% of Budget</th>
+            <th>Ad Group Structure</th>
+            <th>Performance Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="good-row">
+            <td><strong>Website traffic-Search-01</strong><br><small style="color:var(--text3)">New campaign this period</small></td>
+            <td>₹8,306.75</td>
+            <td><strong>270</strong></td>
+            <td style="color:var(--green)"><strong>₹30.77</strong></td>
+            <td>32.4%</td>
+            <td>1 ad group identified</td>
+            <td><span class="verdict scale">🚀 SCALE — Best CPA</span></td>
+          </tr>
+          <tr class="caution-row">
+            <td><strong>Website traffic-Search-India</strong><br><small style="color:var(--text3)">Largest campaign · 2 ad groups</small></td>
+            <td>₹14,856.66</td>
+            <td><strong>319</strong></td>
+            <td style="color:var(--yellow)">₹46.57</td>
+            <td>57.9%</td>
+            <td>karax ai + Meetings groups</td>
+            <td><span class="verdict warn">⚠️ OPTIMIZE — High spend</span></td>
+          </tr>
+          <tr class="waste-row">
+            <td><strong>Chrome Extension</strong><br><small style="color:var(--text3)">New this period · wrong keywords</small></td>
+            <td>₹2,464.43</td>
+            <td><strong>8</strong></td>
+            <td style="color:var(--red)"><strong>₹308.05</strong></td>
+            <td>9.6%</td>
+            <td>Single ad group</td>
+            <td><span class="verdict pause">🛑 PAUSE — 6.6× avg CPA</span></td>
+          </tr>
+          <tr>
+            <td><strong>Website traffic-Search-US</strong><br><small style="color:var(--text3)">Zero activity this period</small></td>
+            <td>₹0.00</td>
+            <td>0</td>
+            <td>₹0.00</td>
+            <td>0%</td>
+            <td>—</td>
+            <td><span class="verdict dead">💀 DEAD — Reactivate or remove</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STEP 3: WASTE DETECTION -->
+  <div class="section">
+    <div class="section-title">Step 3 — Waste Detection <span class="tag">High Priority</span></div>
+
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <h3>🔥 Competitor Brand Searches — ₹760+ Wasted</h3>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="wasteChart"></canvas>
+        </div>
+        <p style="color:var(--text2);font-size:12px;margin-top:12px">All showed <strong style="color:var(--red)">0 conversions</strong>. Add as negative exact match immediately.</p>
+      </div>
+      <div class="chart-card">
+        <h3>💸 Top Non-Converting Search Terms (All = 0 Conv.)</h3>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="nonConvChart"></canvas>
+        </div>
+        <p style="color:var(--text2);font-size:12px;margin-top:12px">₹5,686+ spent on the word "ai" + broad match leakage. Root cause: all keywords on Broad Match only.</p>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Waste Detection: Search Terms with ₹0 Return (Partial List)</h3>
+        <p>These are actual user queries that triggered your ads — all with zero conversions</p>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Search Term</th><th>Spend</th><th>Clicks</th><th>Impressions</th><th>Conversions</th><th>Waste Type</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr class="waste-row"><td><strong>ai</strong></td><td style="color:var(--red)">₹622.86</td><td>44</td><td>432</td><td style="color:var(--red)">0</td><td>🎯 Too generic — 1-word query</td><td>Negative exact [ai]</td></tr>
+          <tr class="waste-row"><td><strong>tome ai</strong></td><td style="color:var(--red)">₹411.77</td><td>35</td><td>374</td><td style="color:var(--red)">0</td><td>🏴 Competitor brand</td><td>Negative exact [tome ai]</td></tr>
+          <tr class="waste-row"><td><strong>workflow</strong></td><td style="color:var(--red)">₹362.08</td><td>35</td><td>284</td><td style="color:var(--red)">0</td><td>🎯 Too generic — no intent</td><td>Negative broad "workflow"</td></tr>
+          <tr class="waste-row"><td><strong>ppt maker ai</strong></td><td style="color:var(--red)">₹320.57</td><td>19</td><td>95</td><td style="color:var(--red)">0</td><td>❌ Irrelevant — not a PPT tool</td><td>Negative [ppt], [presentation]</td></tr>
+          <tr class="waste-row"><td><strong>research ai</strong></td><td style="color:var(--red)">₹292.67</td><td>20</td><td>251</td><td style="color:var(--red)">0</td><td>❌ Wrong audience — academic</td><td>Negative [research paper]</td></tr>
+          <tr class="waste-row"><td><strong>ai tools like chatgpt</strong></td><td style="color:var(--red)">₹229.69</td><td>13</td><td>88</td><td style="color:var(--red)">0</td><td>🏴 Competitor comparison</td><td>Negative [chatgpt]</td></tr>
+          <tr class="waste-row"><td><strong>ai ppt maker</strong></td><td style="color:var(--red)">₹247.13</td><td>13</td><td>61</td><td style="color:var(--red)">0</td><td>❌ Irrelevant tool category</td><td>Negative [ppt maker], [ppt generator]</td></tr>
+          <tr class="waste-row"><td><strong>notion ai</strong></td><td style="color:var(--red)">₹144.85</td><td>11</td><td>498</td><td style="color:var(--red)">0</td><td>🏴 Competitor brand (highest impressions!)</td><td>Negative exact [notion ai], [notion]</td></tr>
+          <tr class="waste-row"><td><strong>flowchart maker ai</strong></td><td style="color:var(--red)">₹150.09</td><td>5</td><td>40</td><td style="color:var(--red)">0</td><td>❌ Irrelevant tool category</td><td>Negative [flowchart]</td></tr>
+          <tr class="waste-row"><td><strong>blackbox ai</strong></td><td style="color:var(--red)">₹66.58</td><td>7</td><td>395</td><td style="color:var(--red)">0</td><td>🏴 Competitor brand</td><td>Negative exact [blackbox ai]</td></tr>
+          <tr class="waste-row"><td><strong>ai for research paper</strong></td><td style="color:var(--red)">₹170.72</td><td>11</td><td>53</td><td style="color:var(--red)">0</td><td>❌ Academic — wrong ICP</td><td>Negative [research paper]</td></tr>
+          <tr class="caution-row"><td><strong>otter ai</strong></td><td style="color:var(--yellow)">₹50.31</td><td>4</td><td>142</td><td style="color:var(--red)">0</td><td>🏴 Competitor (relevant but 0 conv.)</td><td>Consider targeted Otter campaign</td></tr>
+          <tr class="waste-row"><td><strong>google chrome</strong></td><td style="color:var(--red)">₹64.34</td><td>2</td><td>—</td><td style="color:var(--red)">0</td><td>❌ Chrome Extension campaign leak</td><td>Negative exact [google chrome]</td></tr>
+          <tr class="waste-row"><td><strong>chrome web browser</strong></td><td style="color:var(--red)">₹53.65</td><td>2</td><td>—</td><td style="color:var(--red)">0</td><td>❌ Chrome Extension campaign leak</td><td>Negative [chrome browser]</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NEGATIVE KEYWORDS -->
+  <div class="section">
+    <div class="section-title">Step 4 — Negative Keyword Hit List <span class="tag">Add Immediately</span></div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Recommended Negative Keywords by Category</h3>
+        <p>Add these to campaign-level negatives to stop budget bleed immediately</p>
+      </div>
+      <div class="neg-kw-grid">
+        <div style="width:100%;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);padding-bottom:8px">🏴 Competitor Brands (Negative Exact Match)</div>
+        <span class="neg-kw competitor">− notion ai</span>
+        <span class="neg-kw competitor">− tome ai</span>
+        <span class="neg-kw competitor">− tome</span>
+        <span class="neg-kw competitor">− blackbox ai</span>
+        <span class="neg-kw competitor">− gamma ai</span>
+        <span class="neg-kw competitor">− gamma app</span>
+        <span class="neg-kw competitor">− otter ai</span>
+        <span class="neg-kw competitor">− notta ai</span>
+        <span class="neg-kw competitor">− skywork ai</span>
+        <span class="neg-kw competitor">− agnes ai</span>
+        <span class="neg-kw competitor">− chatgpt</span>
+        <span class="neg-kw competitor">− claude ai</span>
+        <span class="neg-kw competitor">− fathom</span>
+        <span class="neg-kw competitor">− read ai</span>
+        <span class="neg-kw competitor">− notegpt</span>
+        <span class="neg-kw competitor">− kortix ai</span>
+        <span class="neg-kw competitor">− vomo ai</span>
+        <span class="neg-kw competitor">− kiwinote ai</span>
+
+        <div style="width:100%;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--yellow);padding: 12px 0 8px">❌ Irrelevant Tool Categories (Negative Broad)</div>
+        <span class="neg-kw irrelevant">− ppt maker</span>
+        <span class="neg-kw irrelevant">− ppt generator</span>
+        <span class="neg-kw irrelevant">− presentation maker</span>
+        <span class="neg-kw irrelevant">− powerpoint maker</span>
+        <span class="neg-kw irrelevant">− flowchart</span>
+        <span class="neg-kw irrelevant">− research paper</span>
+        <span class="neg-kw irrelevant">− academic</span>
+        <span class="neg-kw irrelevant">− humanizer</span>
+        <span class="neg-kw irrelevant">− excel ai</span>
+
+        <div style="width:100%;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding: 12px 0 8px">🎯 Generic / No-Intent Terms (Negative Exact)</div>
+        <span class="neg-kw generic">− ai (exact)</span>
+        <span class="neg-kw generic">− workflow (exact)</span>
+        <span class="neg-kw generic">− best ai</span>
+        <span class="neg-kw generic">− auto gpt</span>
+        <span class="neg-kw generic">− ai tool (exact)</span>
+        <span class="neg-kw generic">− ai tools</span>
+        <span class="neg-kw generic">− copy ai</span>
+        <span class="neg-kw generic">− google chrome</span>
+        <span class="neg-kw generic">− chrome web browser</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: KEYWORD INSIGHTS -->
+  <div class="section">
+    <div class="section-title">Step 4 — Keyword-Level Insights <span class="tag">All Broad Match — Structural Problem</span></div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Top Keywords by Spend — All Broad Match, No Conversion Data Available Per Keyword</h3>
+        <p>⚠️ Critical structural issue: 100% of keywords are on Broad Match. Google is autonomously expanding to irrelevant searches. Switch high-spend keywords to Phrase + Exact match.</p>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Keyword</th><th>Match Type</th><th>Spend</th><th>Clicks</th><th>CTR</th><th>Est. CPC</th><th>Assessment</th><th>Recommendation</th></tr>
+        </thead>
+        <tbody>
+          <tr class="good-row"><td><strong>ai productivity tool</strong> ×2</td><td><span style="color:var(--yellow)">Broad</span></td><td>₹5,138.21</td><td>294</td><td>~9.1%</td><td>₹17.48</td><td>✅ Strong CTR, high intent</td><td>Duplicate — merge, add Exact match</td></tr>
+          <tr class="good-row"><td><strong>ai meeting notes</strong> ×3</td><td><span style="color:var(--yellow)">Broad</span></td><td>₹3,835.50</td><td>277</td><td>~7.4%</td><td>₹13.85</td><td>✅ Core product term — scale</td><td>Add [ai meeting notes] Exact match</td></tr>
+          <tr class="good-row"><td><strong>ai meeting transcription</strong></td><td><span style="color:var(--yellow)">Broad</span></td><td>₹337.78</td><td>14</td><td>18.67%</td><td>₹24.13</td><td>🔥 Highest CTR keyword!</td><td>Scale budget — highest intent signal</td></tr>
+          <tr class="good-row"><td><strong>ai for freelancers</strong></td><td><span style="color:var(--yellow)">Broad</span></td><td>₹72.41</td><td>5</td><td>19.23%</td><td>₹14.48</td><td>🔥 Excellent CTR, low spend</td><td>Scale — strong ICP alignment</td></tr>
+          <tr class="good-row"><td><strong>ai content creation suite</strong></td><td><span style="color:var(--yellow)">Broad</span></td><td>₹1,115.22</td><td>91</td><td>11.42%</td><td>₹12.26</td><td>✅ Good CTR, relevant</td><td>Keep — add phrase match version</td></tr>
+          <tr class="good-row"><td><strong>ai meeting summarizer</strong></td><td><span style="color:var(--yellow)">Broad</span></td><td>₹33.26</td><td>2</td><td>1.74%</td><td>₹16.63</td><td>⚠️ Low CTR despite high intent term</td><td>Add to exact — test new ad copy</td></tr>
+          <tr class="caution-row"><td><strong>ai for researchers</strong> ×2</td><td><span style="color:var(--yellow)">Broad</span></td><td>₹2,221.87</td><td>159</td><td>~9.1%</td><td>₹13.97</td><td>⚠️ Academic overlap risk</td><td>Add negatives: paper, thesis, student</td></tr>
+          <tr class="caution-row"><td><strong>meeting management software</strong></td><td><span style="color:var(--yellow)">Broad</span></td><td>₹1,308.03</td><td>92</td><td>5.71%</td><td>₹14.22</td><td>⚠️ Low CTR — ad/keyword mismatch?</td><td>Test new ad copy matching intent</td></tr>
+          <tr class="waste-row"><td><strong>workflow</strong> ×2</td><td><span style="color:var(--yellow)">Broad</span></td><td>₹921.01</td><td>70</td><td>~9%</td><td>₹13.16</td><td>❌ 1-word — too generic</td><td>Pause or narrow to "ai workflow automation"</td></tr>
+          <tr class="waste-row"><td><strong>extension chrome</strong></td><td><span style="color:var(--yellow)">Broad</span></td><td>₹191.71</td><td>10</td><td>8.13%</td><td>₹19.17</td><td>❌ Chrome Extension campaign waste</td><td>Pause entire Chrome campaign</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STEP 5: SCALING -->
+  <div class="section">
+    <div class="section-title">Step 5 — Scaling Opportunities <span class="tag">Where to Invest More</span></div>
+    <div class="chart-grid-2">
+      <div>
+        <div class="highlight-box">
+          <h3>🚀 Scale Immediately: Website traffic-Search-01</h3>
+          <p>This campaign achieved ₹30.77 CPA — 34% better than your India campaign. With 270 conversions in 30 days on ₹8,306 spend, it has proven efficiency. Redirecting Chrome Extension budget (₹2,464) here would yield an estimated <strong style="color:var(--green)">+80 additional conversions</strong> at current CPA.</p>
+        </div>
+        <div class="highlight-box">
+          <h3>🔥 Scale: "ai meeting transcription" Keyword</h3>
+          <p>18.67% CTR — the highest in your entire account. This term signals active buying intent (someone who wants to transcribe meetings is shopping for exactly what Karax does). Current spend: only ₹337. Increase to ₹1,500–2,000/month with Exact match bidding.</p>
+        </div>
+      </div>
+      <div>
+        <div class="highlight-box">
+          <h3>📱 Mobile is Outperforming Desktop — Increase Mobile Bids</h3>
+          <p>Counter-intuitive for B2B SaaS: your Mobile CPA is ₹31.89 vs Desktop ₹49.47. Mobile conversions = 208 on ₹6,646 spend. Consider setting a +20% mobile bid adjustment. This alone could reduce your blended CPA by ₹4–6.</p>
+        </div>
+        <div class="highlight-box">
+          <h3>🎯 Meetings Ad Group: ₹5,763 Spend Surge (+83%)</h3>
+          <p>The Meetings ad group in the India campaign increased 83% period-over-period and is spending heavily. If this group drives the meeting assistant feature signups (high-value users), it deserves dedicated budget with proper attribution tracking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: RECS -->
+  <div class="section">
+    <div class="section-title">Step 6 — Strategic Recommendations <span class="tag">Action Plan</span></div>
+    <div class="rec-grid">
+      <div class="rec-card critical">
+        <div class="rec-num">1</div>
+        <h4>🛑 Pause Chrome Extension Campaign</h4>
+        <p>₹308.05 CPA is catastrophically inefficient vs ₹30.77 best CPA. Keywords "google chrome" and "chrome web browser" attract browser users, not AI tool buyers. The entire campaign structure is misaligned with buyer intent.</p>
+        <div class="rec-impact">💰 Est. recovery: ₹2,464/month redirectable</div>
+      </div>
+      <div class="rec-card scale">
+        <div class="rec-num">2</div>
+        <h4>🚀 Scale Website traffic-Search-01 by 30–40%</h4>
+        <p>Best performing campaign at ₹30.77 CPA. Increase daily budget by redirecting Chrome Extension savings + adding ₹1,000/month incremental. Monitor CPA doesn't degrade above ₹40 as you scale.</p>
+        <div class="rec-impact">📈 Est. +80–100 additional conversions/month</div>
+      </div>
+      <div class="rec-card critical">
+        <div class="rec-num">3</div>
+        <h4>🔄 Migrate from Broad Match to Phrase + Exact</h4>
+        <p>100% Broad Match is the root cause of competitor brand leakage, irrelevant PPT/research queries, and generic "ai" traffic. Switch top 10 keywords to Phrase match immediately. Add Exact match for "ai meeting notes", "ai productivity tool", "ai meeting transcription".</p>
+        <div class="rec-impact">🎯 Est. 20–30% reduction in wasted CPC</div>
+      </div>
+      <div class="rec-card critical">
+        <div class="rec-num">4</div>
+        <h4>🚫 Deploy 30+ Negative Keywords NOW</h4>
+        <p>Competitors (Notion, Tome, Blackbox, Gamma, Otter, Claude) + irrelevant categories (PPT maker, flowchart, research paper, humanizer) are draining ₹760+ with zero returns. Add the full negative keyword list from Step 4 today.</p>
+        <div class="rec-impact">💸 Est. ₹760+ rescued per 30 days</div>
+      </div>
+      <div class="rec-card optimize">
+        <div class="rec-num">5</div>
+        <h4>📣 Fix Ad Copy — Meeting Intent Mismatch</h4>
+        <p>"Meeting management software" has 5.71% CTR despite being a decent keyword — ad copy likely doesn't resonate. Test headlines: "Meeting AI That Executes" / "Auto-CRM + Follow-ups After Every Call" / "Your Otter.ai Alternative — Plus Execution Layer". Lead with the ROI outcome, not features.</p>
+        <div class="rec-impact">🧪 A/B test 3 RSA variations per ad group</div>
+      </div>
+      <div class="rec-card optimize">
+        <div class="rec-num">6</div>
+        <h4>🏠 Landing Page: Match Ad Intent to Page</h4>
+        <p>Searchers for "ai meeting notes" land on generic homepage. Create dedicated landing pages: (1) Meeting Assistant page for meeting keywords, (2) Workflow Automation page for productivity keywords, (3) Otter.ai Comparison page for competitor-adjacent terms. Each needs a clear CTA above the fold targeting ₹1,499 vs ₹7,318 savings message.</p>
+        <div class="rec-impact">🎯 Est. 15–25% conversion rate improvement</div>
+      </div>
+    </div>
+
+    <!-- BUDGET REDISTRIBUTION -->
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Budget Redistribution Strategy</h3>
+        <p>Reallocating from waste to winners without increasing total spend</p>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Campaign/Action</th><th>Current Budget</th><th>Recommended Budget</th><th>Change</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr class="good-row"><td><strong>Website traffic-Search-01</strong></td><td>₹8,307</td><td>₹11,500</td><td style="color:var(--green)">+₹3,193 (+38%)</td><td>Best CPA — proven efficiency at scale</td></tr>
+          <tr class="caution-row"><td><strong>Website traffic-Search-India</strong></td><td>₹14,857</td><td>₹13,000</td><td style="color:var(--yellow)">-₹1,857 (-12%)</td><td>Optimize first, then reinvest savings</td></tr>
+          <tr class="waste-row"><td><strong>Chrome Extension</strong></td><td>₹2,464</td><td>₹0</td><td style="color:var(--red)">-₹2,464 (-100%)</td><td>Pause — 6.6× over CPA target</td></tr>
+          <tr><td><strong>Negative KW savings (est.)</strong></td><td>₹760+</td><td>→ Reinvest in Search-01</td><td style="color:var(--green)">+₹760</td><td>Rescued from competitor brand waste</td></tr>
+          <tr style="background:rgba(0,212,170,0.05)"><td><strong>NEW: Meeting Assistant campaign</strong></td><td>₹0</td><td>₹2,000</td><td style="color:var(--green)">+₹2,000</td><td>Dedicated meeting keywords at Phrase/Exact match</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STEP 7: EXECUTIVE SUMMARY -->
+  <div class="section">
+    <div class="section-title">Step 7 — Executive Summary <span class="tag">30-Day Snapshot</span></div>
+    <div class="exec-grid">
+      <div class="exec-card problem">
+        <h4>🔴 Top 3 Critical Problems</h4>
+        <ul>
+          <li>Chrome Extension campaign at ₹308 CPA — 6.6× above efficient threshold. ₹2,464 burned on 8 conversions in 30 days with zero structural justification.</li>
+          <li>100% Broad Match across all keywords causing competitor brand leakage (Notion, Tome, Gamma, Otter, Blackbox) and irrelevant category traffic (PPT tools, research papers). ₹760+ wasted monthly.</li>
+          <li>Zero conversion data on search terms — all visible search queries show 0 conversions, suggesting attribution gap OR the ₹5,686 spent on "ai"-related generic terms is generating zero direct response.</li>
+        </ul>
+      </div>
+      <div class="exec-card opportunity">
+        <h4>🟢 Top 3 Biggest Opportunities</h4>
+        <ul>
+          <li>Website traffic-Search-01 at ₹30.77 CPA is 28% more efficient than the India campaign. Redirecting ₹3,000–4,000/month here could yield 100+ additional conversions with no new budget.</li>
+          <li>Mobile outperforms desktop (₹31.89 vs ₹49.47 CPA). A +20% mobile bid adjustment and mobile-optimized landing page could shift 30% of spend to the more efficient device segment.</li>
+          <li>"ai meeting transcription" (18.67% CTR) and "ai for freelancers" (19.23% CTR) are massively underinvested at ₹337 and ₹72 spend respectively. Both signal high purchase intent — scale to ₹2,000+ each.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="table-card" style="margin-top:20px">
+      <div class="table-header">
+        <h3>Overall Campaign Health Scorecard</h3>
+      </div>
+      <table>
+        <thead><tr><th>Dimension</th><th>Current State</th><th>Score</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td>Campaign Structure</td><td>3 campaigns, all Broad Match, duplicate keywords</td><td style="color:var(--red)">⚠️ 3/10</td><td>Phrase + Exact match, no duplicates</td></tr>
+          <tr><td>Blended CPA</td><td>₹42.94 (acceptable if conv. = paid signups)</td><td style="color:var(--yellow)">6/10</td><td>Under ₹35 blended</td></tr>
+          <tr><td>Negative Keyword Coverage</td><td>Zero negatives identified in current setup</td><td style="color:var(--red)">⚠️ 1/10</td><td>30+ negatives across all campaigns</td></tr>
+          <tr><td>Keyword Match Type</td><td>100% Broad Match</td><td style="color:var(--red)">⚠️ 2/10</td><td>Mix: 40% Exact, 40% Phrase, 20% Broad</td></tr>
+          <tr><td>Best Campaign (Search-01)</td><td>₹30.77 CPA, 270 conv., strong performance</td><td style="color:var(--green)">9/10</td><td>Scale this model to all campaigns</td></tr>
+          <tr><td>Device Optimization</td><td>Mobile CPA better but no bid adjustment</td><td style="color:var(--yellow)">5/10</td><td>+20% mobile bid adjustment</td></tr>
+          <tr><td>Ad Copy Relevance</td><td>Unknown — single RSA variation per ad group likely</td><td style="color:var(--yellow)">5/10</td><td>3+ RSA variations, intent-matched</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STEP 8: ADVANCED INSIGHTS -->
+  <div class="section">
+    <div class="section-title">Step 8 — Advanced Strategic Insights <span class="tag">Senior PPC Consultant View</span></div>
+
+    <div class="rec-grid">
+      <div class="rec-card optimize">
+        <div class="rec-num">A</div>
+        <h4>🎯 Audience Targeting: Age Suppression</h4>
+        <p>18–24 year olds account for 18.18% of impressions but are very unlikely to be B2B SaaS buyers (VP Sales, Founders, RevOps). Add a -30% bid adjustment for 18–24 to cut irrelevant spend. Also consider +15% for 25–34 (your core ICP at 52% of impressions).</p>
+        <div class="rec-impact">Est. 5–8% CPA improvement</div>
+      </div>
+      <div class="rec-card optimize">
+        <div class="rec-num">B</div>
+        <h4>⏰ Dayparting: Kill Dead Hours (1AM–5AM)</h4>
+        <p>Hours 1AM–5AM show 60–122 impressions — negligible volume but 100% wasted if any clicks occur. Add -100% bid adjustment for 1AM–5AM. Peak hours (11AM–12PM, 7PM–8PM) could benefit from +20% bid boost to maximize impression share when purchase intent is highest.</p>
+        <div class="rec-impact">Recover ~2% of spend, boost peak hours</div>
+      </div>
+      <div class="rec-card scale">
+        <div class="rec-num">C</div>
+        <h4>🔄 Remarketing: Visitors Who Didn't Sign Up</h4>
+        <p>You're paying ₹42.94 to get someone to your site — but if they don't convert, they're gone. Set up RLSA (Remarketing Lists for Search Ads) targeting site visitors who visited /features or /pricing but didn't sign up. Bid 40–50% higher for this audience — they've already shown interest and conversion rates 3–5× higher vs cold traffic.</p>
+        <div class="rec-impact">Expected 40–60% CPA reduction for warm audience</div>
+      </div>
+      <div class="rec-card scale">
+        <div class="rec-num">D</div>
+        <h4>📐 Campaign Structure: Rebuild Around SKAG-Lite</h4>
+        <p>The current "karax ai" + "Meetings" ad group structure is too broad. Recommended: create dedicated ad groups for each core use case — (1) Meeting Assistant keywords, (2) Workflow Automation keywords, (3) AI Productivity keywords, (4) Otter displacement keywords. Each gets intent-matched ad copy + dedicated landing page.</p>
+        <div class="rec-impact">Projected 15–20% Quality Score improvement → lower CPCs</div>
+      </div>
+      <div class="rec-card optimize">
+        <div class="rec-num">E</div>
+        <h4>💰 Bid Strategy: Move to Target CPA</h4>
+        <p>With 597 conversions in 30 days, you now have enough data to switch from Manual CPC or Maximize Clicks to Target CPA bidding. Set target at ₹38 (below your current ₹42.94 avg). Google's Smart Bidding will optimize bid decisions across thousands of signals you can't manually manage. Minimum 30 conversions/month required — you're at 597 — you're ready.</p>
+        <div class="rec-impact">Expected 10–15% CPA reduction over 4–6 weeks</div>
+      </div>
+      <div class="rec-card scale">
+        <div class="rec-num">F</div>
+        <h4>🏴 Competitor Displacement Campaign (Separate)</h4>
+        <p>Currently, competitor terms (Notion, Otter, Tome) appear accidentally via Broad Match — with zero conversions. Instead, build a dedicated competitor displacement campaign with intent: "Otter.ai alternative", "Better than Notion AI", "Tome AI alternative". These users are actively evaluating tools — conversion rates can be 2–3× higher than generic searches. Align with Campaign 003 in your campaign master.</p>
+        <div class="rec-impact">High-value segment: estimated 25–35 trial signups/month</div>
+      </div>
+    </div>
+
+    <!-- SUNDAY ANOMALY -->
+    <div class="highlight-box" style="border-color:rgba(255,167,38,0.35);background:rgba(255,167,38,0.05)">
+      <h3 style="color:var(--yellow)">⚠️ Anomaly: Sunday Has Highest Impressions (5,210) — B2B SaaS Red Flag</h3>
+      <p>For a B2B SaaS targeting VPs, Founders and RevOps professionals, Sunday being your #1 impression day is suspicious. Possible explanations: (1) Your broad match keywords are capturing weekend hobbyist/student searches, (2) Indian market behavior where professionals actively research tools on weekends, or (3) Budget is concentrating on weekends when competition drops CPCs. Investigate with a weekday-only dayparting test for 2 weeks to compare conversion quality.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Karax.ai Google Ads Performance Audit · Data Period: Feb 15 – Mar 16, 2026 · Generated Mar 17, 2026<br>
+  Source: Google Ads Overview CSV Export (8 files) · Analysis: Senior PPC Strategist · Karax KARAX-ENGINE
+</footer>
+
+<script>
+  const chartDefaults = {
+    color: '#9090a8',
+    font: { family: 'Inter, -apple-system, sans-serif', size: 12 }
+  };
+  Chart.defaults.color = chartDefaults.color;
+  Chart.defaults.font = chartDefaults.font;
+
+  // Campaign Chart
+  new Chart(document.getElementById('campaignChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Search-India', 'Search-01', 'Chrome Ext.', 'Search-US'],
+      datasets: [
+        {
+          label: 'Spend (₹)',
+          data: [14856.66, 8306.75, 2464.43, 0],
+          backgroundColor: ['rgba(124,92,252,0.7)', 'rgba(0,212,170,0.7)', 'rgba(255,107,107,0.7)', 'rgba(96,96,160,0.3)'],
+          borderRadius: 6, yAxisID: 'y'
+        },
+        {
+          label: 'Conversions',
+          data: [319, 270, 8, 0],
+          backgroundColor: ['rgba(124,92,252,0.25)', 'rgba(0,212,170,0.25)', 'rgba(255,107,107,0.25)', 'rgba(96,96,160,0.1)'],
+          borderColor: ['rgba(124,92,252,0.8)', 'rgba(0,212,170,0.8)', 'rgba(255,107,107,0.8)', 'rgba(96,96,160,0.3)'],
+          borderWidth: 2, borderRadius: 6, yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#9090a8', font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0' } },
+        y: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', callback: v => '₹' + v.toLocaleString() }, position: 'left' },
+        y1: { grid: { display: false }, ticks: { color: '#6060a0' }, position: 'right' }
+      }
+    }
+  });
+
+  // Device CPA Chart
+  new Chart(document.getElementById('deviceChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Desktop', 'Mobile', 'Tablets'],
+      datasets: [
+        {
+          label: 'CPA (₹)',
+          data: [49.47, 31.89, 35.23],
+          backgroundColor: ['rgba(66,165,245,0.7)', 'rgba(0,212,170,0.7)', 'rgba(255,167,38,0.7)'],
+          borderRadius: 8
+        },
+        {
+          label: 'Conversions',
+          data: [371.58, 208.42, 17],
+          backgroundColor: ['rgba(66,165,245,0.25)', 'rgba(0,212,170,0.25)', 'rgba(255,167,38,0.25)'],
+          borderColor: ['rgba(66,165,245,1)', 'rgba(0,212,170,1)', 'rgba(255,167,38,1)'],
+          borderWidth: 2, borderRadius: 8, yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#9090a8', font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0' } },
+        y: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', callback: v => '₹' + v }, position: 'left', title: { display: true, text: 'CPA (₹)', color: '#6060a0' } },
+        y1: { grid: { display: false }, ticks: { color: '#6060a0' }, position: 'right', title: { display: true, text: 'Conversions', color: '#6060a0' } }
+      }
+    }
+  });
+
+  // Daily Trend
+  const dates = ['Feb 15','Feb 16','Feb 17','Feb 18','Feb 19','Feb 20','Feb 21','Feb 22','Feb 23','Feb 24','Feb 25','Feb 26','Feb 27','Feb 28','Mar 1','Mar 2','Mar 3','Mar 4','Mar 5','Mar 6','Mar 7','Mar 8','Mar 9','Mar 10','Mar 11','Mar 12','Mar 13','Mar 14','Mar 15','Mar 16'];
+  const costs = [201.87,710.45,2967.88,1121.03,2310.34,2197.01,0,2616.08,803.14,1099.37,553.1,0,398.33,437.46,361.18,258.84,243.72,387.67,297.26,455.54,186.02,255.56,363.14,726.39,594.31,151.31,421.48,2455.92,2149.4,904.05];
+  const convs = [7,23,69,17,42,61,0,48,18,32,15,0,10,10,15,6,9,6,12,21,8,10,15,21,21,4,10,40,38,9];
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Daily Spend (₹)',
+          data: costs,
+          borderColor: 'rgba(124,92,252,0.9)', backgroundColor: 'rgba(124,92,252,0.08)',
+          fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: 'rgba(124,92,252,0.9)', yAxisID: 'y'
+        },
+        {
+          label: 'Conversions',
+          data: convs,
+          borderColor: 'rgba(0,212,170,0.9)', backgroundColor: 'rgba(0,212,170,0.05)',
+          fill: false, tension: 0.4, pointRadius: 3, pointBackgroundColor: 'rgba(0,212,170,0.9)', yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#9090a8', font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', maxTicksLimit: 15, maxRotation: 45 } },
+        y: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', callback: v => '₹' + v.toLocaleString() }, position: 'left' },
+        y1: { grid: { display: false }, ticks: { color: '#6060a0' }, position: 'right' }
+      }
+    }
+  });
+
+  // Age Chart
+  new Chart(document.getElementById('ageChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['18-24','25-34','35-44','45-54','55-64','65+'],
+      datasets: [{
+        data: [18.18, 52.19, 19.37, 8.09, 1.93, 0.25],
+        backgroundColor: ['rgba(255,107,107,0.7)','rgba(0,212,170,0.7)','rgba(124,92,252,0.7)','rgba(66,165,245,0.7)','rgba(255,167,38,0.5)','rgba(96,96,160,0.5)'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: '#9090a8', font: { size: 11 }, boxWidth: 12, padding: 8 } }
+      }
+    }
+  });
+
+  // Hour Chart
+  const hours = ['12A','1A','2A','3A','4A','5A','6A','7A','8A','9A','10A','11A','12P','1P','2P','3P','4P','5P','6P','7P','8P','9P','10P','11P'];
+  const hImps = [228,122,77,60,65,60,717,1197,1299,1303,1236,1585,1727,1265,1241,1215,1041,1070,1400,1462,1561,1196,871,485];
+  new Chart(document.getElementById('hourChart'), {
+    type: 'bar',
+    data: {
+      labels: hours,
+      datasets: [{
+        data: hImps,
+        backgroundColor: hImps.map(v => v > 1500 ? 'rgba(0,212,170,0.8)' : v > 1000 ? 'rgba(124,92,252,0.6)' : v < 100 ? 'rgba(255,107,107,0.5)' : 'rgba(66,165,245,0.4)'),
+        borderRadius: 3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6060a0', font: { size: 10 } } },
+        y: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Day Chart
+  new Chart(document.getElementById('dayChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      datasets: [{
+        data: [5210, 3361, 4237, 2509, 2278, 2917, 1971],
+        backgroundColor: ['rgba(255,107,107,0.7)','rgba(124,92,252,0.6)','rgba(66,165,245,0.6)','rgba(124,92,252,0.4)','rgba(124,92,252,0.4)','rgba(66,165,245,0.5)','rgba(96,96,160,0.4)'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6060a0' } },
+        y: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0' } }
+      }
+    }
+  });
+
+  // Waste - Competitor brands
+  new Chart(document.getElementById('wasteChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Notion AI', 'Tome AI', 'Blackbox AI', 'Gamma AI+App', 'Otter AI', 'Claude AI'],
+      datasets: [{
+        label: 'Wasted Spend (₹)',
+        data: [144.85, 411.77, 66.58, 86.96, 50.31, 0],
+        backgroundColor: 'rgba(255,107,107,0.7)',
+        borderColor: 'rgba(255,107,107,1)', borderWidth: 1, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', callback: v => '₹'+v } },
+        y: { grid: { display: false }, ticks: { color: '#9090a8' } }
+      }
+    }
+  });
+
+  // Non-converting search terms chart
+  new Chart(document.getElementById('nonConvChart'), {
+    type: 'bar',
+    data: {
+      labels: ['ai (generic)','tome ai','workflow','ppt maker ai','research ai','chatgpt-like','ai ppt maker','research paper','notion ai','flowchart ai'],
+      datasets: [{
+        label: 'Spend (₹) — 0 Conversions',
+        data: [622.86, 411.77, 362.08, 320.57, 292.67, 229.69, 247.13, 170.72, 144.85, 150.09],
+        backgroundColor: hImps.map(() => 'rgba(255,167,38,0.65)').slice(0,10),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#1a1a26' }, ticks: { color: '#6060a0', callback: v => '₹'+v } },
+        y: { grid: { display: false }, ticks: { color: '#9090a8', font: { size: 10 } } }
+      }
+    }
+  });
+</script>
+</body>
+</html>
